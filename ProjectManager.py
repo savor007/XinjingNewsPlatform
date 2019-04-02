@@ -2,10 +2,9 @@ from flask import session, make_response
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
-from Config import *
 from source import NewsDB, CreateRunningApps
 
-apps=CreateRunningApps(RunningConfig["Development"])
+apps=CreateRunningApps("Development")
 AppManager = Manager(apps)
 Migrate(apps, NewsDB)
 AppManager.add_command('db',MigrateCommand)
