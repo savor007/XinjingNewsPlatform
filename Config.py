@@ -1,4 +1,5 @@
 from redis import StrictRedis
+import logging
 
 
 
@@ -15,6 +16,7 @@ class AppsConfiguration():
     SESSION_USE_SIGNER=True
     SESSION_PERMANENT=False    # set to True means never expire
     PERMANENT_SESSION_LIFETIME=3600*72
+    LOG_LEVEL=logging.WARNING
 
 
 class AppsTestConfiguration(AppsConfiguration):
