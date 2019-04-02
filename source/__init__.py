@@ -8,6 +8,7 @@ from flask_session import Session
 from Config import *
 
 NewsDB=SQLAlchemy(app=None)
+redis_store=None
 
 
 
@@ -31,6 +32,9 @@ def CreateRunningApps(Configuration_Name):
     apps.config.from_object(RunningConfig[Configuration_Name])
     NewsDB.init_app(apps)
     Session(apps)
+    global redis_store
     redis_store=StrictRedis(host=RunningConfig[Configuration_Name].REDIS_HOST, port=RunningConfig[Configuration_Name].REDIS_PORT )
+    from source.modules.index import index_blueprint
+    apps.register_blueprint(index_blueprint)
     return apps,logger
 
