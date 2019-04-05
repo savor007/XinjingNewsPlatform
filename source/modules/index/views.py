@@ -1,5 +1,5 @@
 from . import index_blueprint
-from flask import url_for,session,request,make_response, render_template,redirect
+from flask import url_for,session,request,make_response, render_template,redirect,current_app
 from source import redis_store     # try to use the redis_store here, not a must, depending the request logic
 
 @index_blueprint.route('/')
@@ -13,3 +13,8 @@ def HomeTestPage():
 @index_blueprint.route('/index.html')
 def HomeIndexPage():
     return redirect(url_for('index.HomeTestPage'))
+
+
+@index_blueprint.route('/favicon.ico')
+def Sendfavicon():
+    return current_app.send_static_file("news/favicon.ico")

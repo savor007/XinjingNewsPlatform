@@ -1,6 +1,12 @@
 import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import pymysql
+pymysql.install_as_MySQLdb()     #  this is the solution for the error of database migration::ImportError: No module named 'MySQLdb'
+"""
+Migration use the MYSQLDB as default database library. In Python3, it is called pymysql
+"""
+
 """
 #  use to set the storing position of session, go to the Session declaration and check its configuration
 """
