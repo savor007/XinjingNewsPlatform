@@ -2,7 +2,7 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 import logging
 
-from source import NewsDB, CreateRunningApps
+from source import NewsDB, CreateRunningApps, models
 
 apps, logger=CreateRunningApps("Development")
 AppManager = Manager(apps)
