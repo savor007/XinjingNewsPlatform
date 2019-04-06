@@ -39,7 +39,10 @@ def CreateRunningApps(Configuration_Name):
     NewsDB.init_app(apps)
     Session(apps)
     global redis_store
-    redis_store=StrictRedis(host=RunningConfig[Configuration_Name].REDIS_HOST, port=RunningConfig[Configuration_Name].REDIS_PORT )
+    redis_store=StrictRedis(host=RunningConfig[Configuration_Name].REDIS_HOST, port=RunningConfig[Configuration_Name].REDIS_PORT,decode_responses=True)
+    """
+    for redis_store: set decode_response= True, otherwise, the get result is in byte
+    """
     from source.modules.index import index_blueprint
     apps.register_blueprint(index_blueprint)
     from source.modules.passport import passport_blueprint
