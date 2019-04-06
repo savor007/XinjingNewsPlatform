@@ -42,5 +42,7 @@ def CreateRunningApps(Configuration_Name):
     redis_store=StrictRedis(host=RunningConfig[Configuration_Name].REDIS_HOST, port=RunningConfig[Configuration_Name].REDIS_PORT )
     from source.modules.index import index_blueprint
     apps.register_blueprint(index_blueprint)
+    from source.modules.passport import passport_blueprint
+    apps.register_blueprint(passport_blueprint)
     return apps,logger
 
