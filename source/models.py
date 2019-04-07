@@ -66,7 +66,7 @@ class User(BaseModel, NewsDB.Model):
     def password(self, value):
         self.password_hash = generate_password_hash(value)
 
-    def check_passowrd(self, password):
+    def check_passoword(self, password):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
