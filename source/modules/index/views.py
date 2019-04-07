@@ -16,13 +16,11 @@ def HomeTestPage():
         except Exception as error:
             current_app.logger.error(error)
             return jsonify(errno=RET.DBERR, errmsg="dabase access erroor when search user avatar.")
-        else:
-            if user:
-                return render_template('news/index.html', data={"user_info":user.to_dict()})
-            else:
-                return render_template('news/index.html', data={"user_info":None})
+    if user:
+        return render_template('news/index.html', data={"user_info":user.to_dict()})
     else:
-        return render_template('news/index.html', data={"user_info": None})
+        return render_template('news/index.html', data={"user_info":None})
+
 
 @index_blueprint.route('/index.html')
 def HomeIndexPage():
