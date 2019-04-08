@@ -8,6 +8,7 @@ class AppsConfiguration():
     SECRET_KEY="yihy6b19b80ks79bMGiLw5P1B5Xo3wZkokOO537NaDUAH5hRVwYdJ8+k4F3XVhG0"
     SQLALCHEMY_DATABASE_URI='mysql://root:mysql@localhost:3306/NewsPlatformDatabase'
     SQLALCHEMY_TRACK_MODIFICATIONS=True
+    SQLALCHEMY_COMMIT_ON_TEARDOWN=True
     REDIS_HOST='Localhost'
     REDIS_PORT=6379
     SESSION_TYPE='redis'

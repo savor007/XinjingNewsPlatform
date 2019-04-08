@@ -10,7 +10,7 @@ from source.models import *
 from datetime import datetime
 
 
-@passport_blueprint.route('/logout')
+@passport_blueprint.route('/logout', methods=['GET', 'POST'])
 def Logout_Function():
     session.pop('user_id', None)
     session.pop('user_mobile', None)
@@ -44,7 +44,7 @@ def Login_Function():
             else:
                 try:
                     user.last_login=datetime.now()
-                    NewsDB.session.update(user)
+                    # NewsDB.session.update(user)    no updated function
                     NewsDB.session.commit()
                 except Exception as error:
                     current_app.logger.error(error)
@@ -53,7 +53,7 @@ def Login_Function():
                     session['user_id'] = user.id
                     session['user_mobile'] = user.mobile
                     session['user_nickname'] = user.nick_name
-                    return jsonify(error=RET.OK, errmsg='')
+                    return jsonify(errno=RET.OK, errmsg='')
 
 
 

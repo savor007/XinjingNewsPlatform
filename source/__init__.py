@@ -1,5 +1,6 @@
 import logging
 from flask import Flask
+from flask_wtf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 pymysql.install_as_MySQLdb()     #  this is the solution for the error of database migration::ImportError: No module named 'MySQLdb'
@@ -43,6 +44,12 @@ def CreateRunningApps(Configuration_Name):
     """
     for redis_store: set decode_response= True, otherwise, the get result is in byte
     """
+    @apps.after_request
+    def SetCookiesforRequest(response):
+        csrfcode=CSRFProtect.generate_csrf
+        response.set_cookie("csrf_token",csrfcode)
+        return response
+
     from source.modules.index import index_blueprint
     apps.register_blueprint(index_blueprint)
     from source.modules.passport import passport_blueprint
