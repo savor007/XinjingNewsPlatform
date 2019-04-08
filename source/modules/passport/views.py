@@ -147,7 +147,10 @@ def SMSVerfification():
                             current_app.logger.debug("The sms verification code is "+ sms_verifcation_code)
                             try:
                                 sms_sender=sms.CCP()
-                                sms_sender.send_template_sms(mobilephone_number,[sms_verifcation_code,constants.SMS_CODE_REDIS_EXPIRES/60],1)
+                                """"
+                                skip sending sms message as only 2 phone number can be used for test. Already validated below function.
+                                """
+                                #    sms_sender.send_template_sms(mobilephone_number,[sms_verifcation_code,constants.SMS_CODE_REDIS_EXPIRES/60],1)
                             except Exception as error:
                                 current_app.logger.error(error)
                                 return make_response(jsonify(errno=RET.THIRDERR,errmsg=" SMS sent fail"))

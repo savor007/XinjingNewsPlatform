@@ -1,6 +1,6 @@
 import logging
 from flask import Flask
-from flask_wtf import CSRFProtect
+import flask_wtf.csrf as CSRF_Module
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 pymysql.install_as_MySQLdb()     #  this is the solution for the error of database migration::ImportError: No module named 'MySQLdb'
@@ -39,6 +39,8 @@ def CreateRunningApps(Configuration_Name):
     apps.config.from_object(RunningConfig[Configuration_Name])
     NewsDB.init_app(apps)
     Session(apps)
+
+    CSRF_Module.CSRFProtect(apps)
     global redis_store
     redis_store=StrictRedis(host=RunningConfig[Configuration_Name].REDIS_HOST, port=RunningConfig[Configuration_Name].REDIS_PORT,decode_responses=True)
     """
@@ -46,8 +48,9 @@ def CreateRunningApps(Configuration_Name):
     """
     @apps.after_request
     def SetCookiesforRequest(response):
-        csrfcode=CSRFProtect.generate_csrf
+        csrfcode=CSRF_Module.generate_csrf()
         response.set_cookie("csrf_token",csrfcode)
+        logger.debug("csrf_token given by server" + csrfcode)
         return response
 
     from source.modules.index import index_blueprint

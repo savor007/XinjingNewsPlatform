@@ -127,6 +127,9 @@ $(function() {
             method: "post",
             data: JSON.stringify(params),
             contentType: "application/json",
+            headers: {
+            "X-CSRFToken": getCookie("csrf_token")
+        },
             success: function (resp) {
                 if (resp.errno == "0") {
                     // 刷新当前界面
@@ -183,6 +186,9 @@ $(function() {
             type: "post",
             data: JSON.stringify(params),
             contentType: "application/json",
+            headers: {
+            "X-CSRFToken": getCookie("csrf_token")
+        },
             success: function (resp) {
                 if (resp.errno == "0") {
                     // 刷新当前界面
@@ -248,6 +254,9 @@ function sendSMSCode() {
         contentType: "application/json",
         // 响应数据的格式
         dataType: "json",
+        headers: {
+            "X-CSRFToken": getCookie("csrf_token")
+        },
         success: function (resp) {
             if (resp.errno == "0") {
                 // 倒计时60秒，60秒后允许用户再次点击发送短信验证码的按钮
@@ -288,9 +297,9 @@ function logout() {
         url: "/passport/logout",
         type: "post",
         contentType: "application/json",
-        // headers: {
-        //     "X-CSRFToken": getCookie("csrf_token")
-        // },
+        headers: {
+            "X-CSRFToken": getCookie("csrf_token")
+        },
         success: function (resp) {
             // 刷新当前界面
             location.reload()
