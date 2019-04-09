@@ -75,6 +75,8 @@ def ViewFunction_LoadNewsList():
         current_app.logger.error(error)
         return jsonify(errno=RET.PARAMERR, errmsg= "the data format is wrong.")
     else:
+        current_app.logger.debug("parameter from request. category_id=%d, page=%d, per_page_number=%d." % (category_id, page, per_page))
+
         try:
             if category_id!=1:
                 NewsPages_Object= News.query.filter(News.category_id==category_id).order_by(News.create_time.desc()).paginate(page, per_page)

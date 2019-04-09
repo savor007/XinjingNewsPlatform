@@ -64,5 +64,7 @@ def CreateRunningApps(Configuration_Name):
     apps.register_blueprint(index_blueprint)
     from source.modules.passport import passport_blueprint
     apps.register_blueprint(passport_blueprint)
+    from source.modules.news import news_blueprint
+    apps.register_blueprint(news_blueprint)
     return apps,logger
 
