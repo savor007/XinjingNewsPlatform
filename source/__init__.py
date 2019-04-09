@@ -1,4 +1,5 @@
 import logging
+from source.utility.common import *
 from flask import Flask
 import flask_wtf.csrf as CSRF_Module
 from flask_sqlalchemy import SQLAlchemy
@@ -46,6 +47,12 @@ def CreateRunningApps(Configuration_Name):
     """
     for redis_store: set decode_response= True, otherwise, the get result is in byte
     """
+
+    """
+    add customized the filer to html
+    """
+    apps.add_template_filter(index_ranking_num_class, "index_ranking_num_class")    # import common to load filter function
+
     @apps.after_request
     def SetCookiesforRequest(response):
         csrfcode=CSRF_Module.generate_csrf()

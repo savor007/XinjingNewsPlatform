@@ -26,7 +26,7 @@ OTHER_NEWS_PAGE_MAX_COUNT=10
 
 
 #   number of clicking ranking list
-CLICK_RANK_MAX_NEWS=10
+CLICK_RANK_MAX_NEWS=6
 
 #   THE max number of User items in each page of administrator
 ADMIN_USER_PAGE_MAX_COUNT=10

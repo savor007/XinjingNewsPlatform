@@ -5,7 +5,34 @@ var data_querying = true;   // 是否正在向后台获取数据
 
 
 $(function () {
+    // load news category here
+    $.ajax({
+        url: "/loadcategory",
+        type: "get",
+        contentType: "application/json",
+        headers: {
+            "X-CSRFToken": getCookie("csrf_token")
+        },
+        success: function (resp) {
+            if (resp.errno=="0") {
+                // 刷新当前界面
+                $(".menu").html('')
+                for (var i = 0; i < resp.data.length; i++) {
+                    category = resp.data[i]
+                    li_data = '<li class="active" data-cid="' + category.id + '"><a href="javascript:;">' + category.name + '</a></li>'
+                    $(".menu").append(li_data)
+                }
+            }
+        }
+    })
+
+
+
+
+
     // 首页分类切换
+
+
     $('.menu li').click(function () {
         var clickCid = $(this).attr('data-cid')
         $('.menu li').each(function () {
