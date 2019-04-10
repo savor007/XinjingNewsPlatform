@@ -1,4 +1,7 @@
 #  this module is used to define common tools and functions, for both html template and server"
+import functools
+from flask import current_app,g, session
+from source.models import User
 
 
 def index_ranking_num_class(index):
@@ -11,3 +14,18 @@ def index_ranking_num_class(index):
         return "third"
     else:
         return ""
+
+
+def Load_User_Info(func):
+    @functools.wraps(func)
+    def wrapper(*kargs, **kwargs):
+        user=None
+        user_id=session.get('user_id')
+        try:
+            user=User.query.get(user_id)
+        except Exception as error:
+            current_app.logger.error(error)
+        else:
+            g.user=user
+        return func(*kargs,**kwargs)
+    return wrapper

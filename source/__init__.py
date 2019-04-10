@@ -1,5 +1,5 @@
 import logging
-from source.utility.common import *
+
 from flask import Flask
 import flask_wtf.csrf as CSRF_Module
 from flask_sqlalchemy import SQLAlchemy
@@ -51,6 +51,7 @@ def CreateRunningApps(Configuration_Name):
     """
     add customized the filer to html
     """
+    from source.utility.common import index_ranking_num_class
     apps.add_template_filter(index_ranking_num_class, "index_ranking_num_class")    # import common to load filter function
 
     @apps.after_request

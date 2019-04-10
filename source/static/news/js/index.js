@@ -91,7 +91,7 @@ function updateNewsData() {
     //  更新新闻数据
     var params={
         "cid":currentCid,
-        "page":1,
+        "page":cur_page,
         "per_page":19
     }
     $.ajax({
