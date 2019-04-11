@@ -21,11 +21,12 @@ def Load_User_Info(func):
     def wrapper(*kargs, **kwargs):
         user=None
         user_id=session.get('user_id')
-        try:
-            user=User.query.get(user_id)
-        except Exception as error:
-            current_app.logger.error(error)
-        else:
-            g.user=user
+        if user_id:
+            try:
+                user=User.query.get(user_id)
+            except Exception as error:
+                current_app.logger.error(error)
+
+        g.user=user
         return func(*kargs,**kwargs)
     return wrapper

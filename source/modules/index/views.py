@@ -1,8 +1,10 @@
 from source.utility.response_code import RET
 from . import index_blueprint
-from flask import url_for,session,request,make_response, render_template,redirect,current_app, jsonify
+from flask import g,url_for,session,request,make_response, render_template,redirect,current_app, jsonify
 from source import redis_store, NewsDB  # try to use the redis_store here, not a must, depending the request logic
 from source.models import *
+from source.utility.common import *
+
 
 @index_blueprint.route('/')
 def HomeTestPage():
