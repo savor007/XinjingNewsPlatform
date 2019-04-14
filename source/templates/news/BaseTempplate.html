@@ -16,15 +16,15 @@
 <body>
     <div class="header_con">
         <div class="header">
-            <a href="#" class="logo fl"><img src="../../static/news/images/logo.png" alt="logo"></a>
+            <a href="/" class="logo fl"><img src="../../static/news/images/logo.png" alt="logo"></a>
             {% block Menublock %}
             {% endblock %}
             {# check wether the user is log in or not. rander template will bring the the user_info by sesssion. #}
             {% if data.user_info %}
             {# login info session information valid #}
             <div class="user_login fr">
-                <img src="{% if data.user_info.avatar_url %} data.user_info.avatar_url {% else %}../../static/news/images/person01.png {% endif %}" class="lgin_pic">
-                <a href="#">{{data.user_info.nick_name}}</a>
+                <img src="{% if data.user_info.avatar_url %} {{ data.user_info.avatar_url }} {% else %}../../static/news/images/person01.png {% endif %}" class="lgin_pic">
+                <a href="/user/info" id="nick_name">{{data.user_info.nick_name}}</a>
                 <a href="javascript:;" onclick="logout()">退出</a>
             </div>
             {% else %}
@@ -39,6 +39,7 @@
     <div class="conter_con">
         {% block ContenBlock %}
         {% endblock %}
+        {% block RankNewsListBlock %}
         <div class="rank_con fr">
             <div class="rank_title">
                 <h3>点击排行</h3>
@@ -50,6 +51,8 @@
 
             </ul>
         </div>
+        {% endblock %}
+
     </div>
     {% block rankingblock %}
     {% endblock %}
