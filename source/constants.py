@@ -6,7 +6,7 @@ IMAGE_CODE_REDIS_EXPIRES=300
 SMS_CODE_REDIS_EXPIRES=300
 
 # Qiniu Space Domain Name
-QINIU_DOMAIN_PREFIX= "http://oyucyko3w.bkt.clouddn.com/"
+QINIU_DOMAIN_PREFIX= "http://ppzh60mkm.bkt.clouddn.com/"
 
 
 
