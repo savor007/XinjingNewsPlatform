@@ -20,6 +20,7 @@ def function_newsrelease():
     if request.method=='GET':
         try:
             Category_Items=list()
+            category_dict_list =list()
             Category_Items=Category.query.all()
         except Exception as error:
             current_app.logger.error(error)
@@ -27,9 +28,10 @@ def function_newsrelease():
         Catergory_List=list()
         for category_item in Category_Items:
             Catergory_List.append(category_item.to_dict())
+        category_dict_list= Catergory_List[1:]
         data={
             "user_info": user.to_dict(),
-            "category_list": Catergory_List.pop(0)
+            "categories": category_dict_list
         }
         return render_template('news/user_news_release.html', data=data)
     else:
@@ -55,7 +57,7 @@ def function_newslist():
     total_page=1
     released_newslist=list()
     try:
-        news_object_list=News.query.filter(News.user_id==user.id).all().paginate(page, constants.USER_COLLECTION_MAX_NEWS, False)
+        news_object_list=News.query.filter(News.user_id== user.id).all().paginate(page, constants.USER_COLLECTION_MAX_NEWS, False)
     except Exception as error:
         current_app.logger.error(error)
         return jsonify(errno=RET.DBERR, errmsg="error in searching database.")
@@ -90,7 +92,7 @@ def function_loadcollectednews():
     current_page =1
     Colleceted_NewsList = list()
     try:
-        Paginate_Data=User.collection_news.paginate(page_index, constants.USER_COLLECTION_MAX_NEWS, False)
+        Paginate_Data=user.collection_news.paginate(page_index, constants.USER_COLLECTION_MAX_NEWS, False)
     except Exception as error:
         current_app.logger.error(error)
         return jsonify(errno=RET.DBERR, errmsg=' news collected error in database.')

@@ -12,7 +12,7 @@ $(function () {
         $(this).ajaxSubmit({
             url: "/user/pic_info",
             type: "POST",
-            header: {
+            headers: {
                 "X-CSRFToken": getCookie('csrf_token')
             },
             success: function (resp) {
