@@ -9,8 +9,7 @@ $(function () {
         e.preventDefault()
         var signature = $("#signature").val()
         var nick_name = $("#nick_name").val()
-        var gender = $(".gender").val()
-
+        var gender = $('input[type=radio][name=gender]:checked').val()
         if (!nick_name) {
             alert('请输入昵称')
             return
@@ -39,6 +38,7 @@ $(function () {
                     $('.user_center_name', parent.document).html(params['nick_name'])
                     $('#nick_name', parent.document).html(params['nick_name'])
                     $('.input_sub').blur()
+                    alert(resp.errmsg)
                 }else {
                     alert(resp.errmsg)
                 }

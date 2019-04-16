@@ -13,16 +13,16 @@
     <form class="pic_info">
         <h3>头像设置</h3>
         <div class="form-group">
-             <label class="label01">当前图像：</label>
-             <img src="{% if data.user_info.avatar_url %}{{ data.user_info.avatar_url }}{% else %}../../static/news/images/user_pic.png{% endif %}" alt="用户图片" class="now_user_pic">
+             <label class="label01">Current Avartar</label>
+             <img src="{% if data.user_info.avatar_url %}{{ data.user_info.avatar_url }}{% else %}../../static/news/images/user_pic.png{% endif %}" alt="CurrentUser Avartar" class="now_user_pic">
         </div>
         <div class="form-group">
-            <label>上传图像：</label>
+            <label>Select an image</label>
             <input type="file" name="avatar" class="input_file">
         </div>
         
         <div class="form-group">
-            <input type="submit" value="保 存" class="input_sub">
+            <input type="submit" value="Upload Image" class="input_sub">
         </div>
     </form>
 </body>

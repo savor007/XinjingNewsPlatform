@@ -20,6 +20,7 @@ $(function () {
                     $(".now_user_pic").attr("src", resp.data.avatar_url)
                     $(".user_center_pic>img", parent.document).attr("src", resp.data.avatar_url)
                     $(".user_login>img", parent.document).attr("src", resp.data.avatar_url)
+                    alert(resp.errmsg)
                 }else {
                     alert(resp.errmsg)
                 }

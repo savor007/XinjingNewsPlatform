@@ -150,7 +150,7 @@ def Function_UploadUserAvartar():
         return render_template('news/user_pic_info.html', data=data)
     else:
         try:
-            image_data=request.files.get().read
+            image_data= request.files.get("avatar").read()
         except Exception as error:
             current_app.logger.error(error)
             return jsonify(errno=RET.DATAERR, errmsg="Image file reading error")
