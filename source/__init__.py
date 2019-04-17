@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask, render_template
+from flask import Flask, render_template,g
 import flask_wtf.csrf as CSRF_Module
 
 from flask_sqlalchemy import SQLAlchemy
@@ -57,11 +57,16 @@ def CreateRunningApps(Configuration_Name):
     """
     register error handler
     """
+    from source.utility.common import Load_User_Info
     @apps.errorhandler(404)
+    @Load_User_Info
     def SendErrorPage(error):
+        user=g.user
+        data={
+            "user_info": user.to_dict() if user else None
+        }
         logger.error(error)
-
-        return render_template('news/404.html')
+        return render_template('news/404.html', data=data)
 
     @apps.after_request
     def SetCookiesforRequest(response):
