@@ -108,7 +108,7 @@ def function_newslist():
         "user_info":user.to_dict,
         "news_list":[news_item.to_review_dict() for news_item in news_items]
     }
-    return render_template('news/user_news_release.html', data=data)
+    return render_template('news/user_news_list.html', data=data)
 
 
 

@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask
+from flask import Flask, render_template
 import flask_wtf.csrf as CSRF_Module
 
 from flask_sqlalchemy import SQLAlchemy
@@ -54,6 +54,14 @@ def CreateRunningApps(Configuration_Name):
     """
     from source.utility.common import index_ranking_num_class
     apps.add_template_filter(index_ranking_num_class, "index_ranking_num_class")    # import common to load filter function
+    """
+    register error handler
+    """
+    @apps.errorhandler(404)
+    def SendErrorPage(error):
+        logger.error(error)
+
+        return render_template('news/404.html')
 
     @apps.after_request
     def SetCookiesforRequest(response):
