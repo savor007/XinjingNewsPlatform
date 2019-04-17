@@ -81,9 +81,9 @@ def ViewFunction_LoadNewsList():
 
         try:
             if category_id!=1:
-                NewsPages_Object= News.query.filter(News.category_id==category_id).order_by(News.create_time.desc()).paginate(page, per_page)
+                NewsPages_Object= News.query.filter(News.category_id==category_id, News.status==0).order_by(News.create_time.desc()).paginate(page, per_page)
             else:
-                NewsPages_Object = News.query.order_by(News.create_time.desc()).paginate(page, per_page)     # order_by 前面不能加all(),加all()意味着list
+                NewsPages_Object = News.query.filter(News.status==0).order_by(News.create_time.desc()).paginate(page, per_page)     # order_by 前面不能加all(),加all()意味着list
         except Exception as error:
             current_app.logger.error(error)
             return jsonify(errno=RET.DBERR, errmsg="Database query issue")

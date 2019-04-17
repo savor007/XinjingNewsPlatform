@@ -35,8 +35,45 @@ def function_newsrelease():
         }
         return render_template('news/user_news_release.html', data=data)
     else:
-        request_dict=request.json
-        return jsonify(errno=RET.OK, errmsg="upload success.")
+        news_title=request.form.get("title")
+        news_category_id_str=request.form.get('category_id',"1")
+        news_digest=request.form.get('digest',"")
+        news_content=request.form.get('content',"")
+        if not all([news_title, news_category_id_str, news_content, news_digest]):
+            return jsonify(errno=RET.PARAMERR, errmsg="invalid parameter passed down.")
+        try:
+            news_category_id=int(news_category_id_str)
+        except Exception as error:
+            current_app.logger.error(error)
+            return jsonify(errno=RET.PARAMERR, errmsg='parameter format error in news category.')
+        try:
+            news_index_file = request.files.get('index_image').read()
+        except Exception as error:
+            current_app.logger.error(error)
+            return jsonify(errno=RET.PARAMERR, errmsg="file content reading error.")
+        news_url=""
+        try:
+            news_url=StorageFile2RemoteServer(news_index_file)
+        except Exception as error:
+            current_app.logger.error(error)
+            return jsonify(errno=RET.THIRDERR, errmsg="error when storing the image to remote server.")
+        pending_news=News()
+        pending_news.user_id=user.id
+        pending_news.content=news_content
+        pending_news.digest=news_digest
+        pending_news.title=news_title
+        pending_news.index_image_url=news_url
+        pending_news.status=1
+        pending_news.source="National Instruments"
+        NewsDB.session.add(pending_news)
+        try:
+            NewsDB.session.commit()
+        except Exception as error:
+            current_app.logger.error(error)
+            NewsDB.session.rollback()
+            return jsonify(errno=RET.DBERR, errmsg="error in database insertion.")
+        else:
+            return jsonify(errno=RET.OK, errmsg="upload success.")
 
 
 
@@ -57,7 +94,7 @@ def function_newslist():
     total_page=1
     released_newslist=list()
     try:
-        news_object_list=News.query.filter(News.user_id== user.id).all().paginate(page, constants.USER_COLLECTION_MAX_NEWS, False)
+        news_object_list=News.query.filter(News.user_id== user.id).paginate(page, constants.USER_COLLECTION_MAX_NEWS, False)
     except Exception as error:
         current_app.logger.error(error)
         return jsonify(errno=RET.DBERR, errmsg="error in searching database.")
@@ -69,7 +106,7 @@ def function_newslist():
 
     data={
         "user_info":user.to_dict,
-        "news_list":[news_item.to_dict() for news_item in news_items]
+        "news_list":[news_item.to_review_dict() for news_item in news_items]
     }
     return render_template('news/user_news_release.html', data=data)
 
