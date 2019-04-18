@@ -84,5 +84,7 @@ def CreateRunningApps(Configuration_Name):
     apps.register_blueprint(news_blueprint)
     from source.modules.users import user_blueprint
     apps.register_blueprint(user_blueprint)
+    from source.models.admin import admin_blueprint
+    apps.register_blueprint(admin_blueprint)
     return apps,logger
 

@@ -15,6 +15,7 @@ def Logout_Function():
     session.pop('user_id', None)
     session.pop('user_mobile', None)
     session.pop('user_nickname', None)
+    session.pop('is_admin', None)
     return jsonify(errno=RET.OK, errmsg='')
 
 
@@ -53,6 +54,7 @@ def Login_Function():
                     session['user_id'] = user.id
                     session['user_mobile'] = user.mobile
                     session['user_nickname'] = user.nick_name
+                    session['is_admin'] = user.is_admin
                     return jsonify(errno=RET.OK, errmsg='')
 
 
@@ -102,6 +104,7 @@ def Register_Function():
                             session['user_id']=user.id
                             session['user_mobile']=user.mobile
                             session['user_nickname']=user.nick_name
+                            session['is_admin']=user.is_admin
                             return jsonify(errno=RET.OK, errmsg='')
 
 
