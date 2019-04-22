@@ -23,7 +23,7 @@ def function_news_type():
     for category_item in category_object_list:
         category_list.append(category_item.to_dict())
     data={
-        "categories":category_list.pop(0)
+        "categories": category_list[1:]
     }
     return render_template('admin/news_type.html', data=data)
 
@@ -47,19 +47,23 @@ def function_news_editaction():
         return jsonify(errno=RET.DBERR, errmsg="database error when query")
     if not news or categories==[]:
         return jsonify(errno=RET.NODATA, errmsg="no data return in query.")
-    categories_list=list()
-    categories.pop(0)
-    for category_item in categories:
-        category_dict=category_item.to_dict
-        if category_item.id==news.category_id:
-            category_dict["is_selected"]="selected"
-        categories_list.append(category_dict)
     else:
+        categories_list=list()
+        category_select=list()
+        categories.pop(0)
+        for category_item in categories:
+            category_dict=category_item.to_dict()
+            if category_item.id==news.category_id:
+                category_dict["is_selected"]=True
+            else:
+                category_dict["is_selected"]=False
+            categories_list.append(category_dict)
+
         data={
             "news_info": news.to_dict(),
             "categories":categories_list
         }
-        return render_template("admin/news_review_detail.html", data=data)
+        return render_template("admin/news_edit_detail.html", data=data)
 
 
 
@@ -69,6 +73,7 @@ def function_news_edition():
     news_list=list()
     errmsg=''
     page_str=request.args.get("page", "1")
+    key_word=request.args.get("key_word", None)
     try:
         page=int(page_str)
     except Exception as error:
@@ -76,8 +81,12 @@ def function_news_edition():
         return render_template("admin/news_edit.html", data={"news_list": news_list}, errmsg="page formagt error.")
 
     try:
-        News_List_Object=News.query.filter(News.status==0).order_by(News.create_time.desc()). \
-            paginate(page, constants.ADMIN_NEWS_PAGE_MAX_COUNT, False)
+        if not key_word:
+            News_List_Object=News.query.filter(News.status==0).order_by(News.create_time.desc()). \
+                paginate(page, constants.ADMIN_NEWS_PAGE_MAX_COUNT, False)
+        else:
+            News_List_Object = News.query.filter(News.status == 0, News.title.contains(key_word)).order_by(News.create_time.desc()). \
+                paginate(page, constants.ADMIN_NEWS_PAGE_MAX_COUNT, False)
 
     except Exception as error:
         current_app.logger.error(error)
@@ -88,7 +97,8 @@ def function_news_edition():
     data={
         "news_list":news_list,
         "current_page":current_page,
-        "total_page":total_page
+        "total_page":total_page,
+        "keyword":key_word
     }
     return render_template("admin/news_edit.html", data=data, errmsg=errmsg)
 

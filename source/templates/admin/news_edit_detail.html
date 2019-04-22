@@ -4,12 +4,12 @@
 	<meta charset="UTF-8">
 	<title>新经资讯后台管理</title>
 	<link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
-	<link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
-	<script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
-	<script type="text/javascript" src="../../static/admin/js/jquery.form.min.js"></script>
-	<script src="../../static/admin/tinymce/js/tinymce/tinymce.min.js"></script>
-    <script src="../../static/admin/js/tinymce_setup.js"></script>
-	<script src="../../static/admin/js/news_edit_detail.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../../static/admin/js/jquery.form.min.js"></script>
+    <script type="text/javascript" src="../../static/admin/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script type="text/javascript" src="../../static/admin/js/tinymce_setup.js"></script>
+    <script type="text/javascript" src="../../static/admin/js/news_edit_detail.js"></script>
 </head>
 <body>
 	<div class="breadcrub">
@@ -22,14 +22,19 @@
 	    		<label>新闻标题：</label>
 	    		<input type="text" class="input_txt2" value="{{ data.news_info.title }}">
 	    	</div>
-	    	<div class="form_group">
-				<label>新闻分类：</label>
-				<select class="sel_opt">
-                    {% for option in data.categories %}
-					<option value="">{{ option.name }}</option>
+
+            <div class="form_group">
+                <label>新闻分类：</label>
+                <select class="sel_opt" name="category_id">
+                    {% for category in data.categories %}
+                        <option value="{{ category.id }} {% if category.is_selected %} selected {% endif %}">{{ category.name }}</option>
+                        console.log("{{ category.name }}")
                     {% endfor %}
-				</select>
-			</div>
+                </select>
+            </div>
+
+
+
 			<div class="form_group">
 				<label>新闻摘要：</label>
 				<textarea class="input_multxt">{{ data.news_info.digest }}</textarea>
@@ -45,9 +50,10 @@
 			<div class="form_group">
 				<label>新闻内容：</label>
 				<div class="rich_wrap fl">
-					<input class="input_area" id="rich_content" name="content" value="{{ data.news_info.content }}"></input>
+					<input class="input_area" id="rich_content" name="content" value="{{ data.news_info.content}}"></input>
 				</div>
 			</div>
+            <input type="hidden" name="news_id" value="{{ data.news_info.id }}">
 			<div class="form_group indent_group line_top">
 				<input type="submit" value="确定" class="confirm">
 				<input type="button" value="取消" class="cancel" onclick="cancel()">
