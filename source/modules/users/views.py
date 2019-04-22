@@ -62,9 +62,10 @@ def function_newsrelease():
         pending_news.content=news_content
         pending_news.digest=news_digest
         pending_news.title=news_title
-        pending_news.index_image_url=news_url
+        pending_news.index_image_url=constants.QINIU_DOMAIN_PREFIX+news_url
         pending_news.status=1
         pending_news.source="National Instruments"
+        pending_news.category_id=news_category_id
         NewsDB.session.add(pending_news)
         try:
             NewsDB.session.commit()
