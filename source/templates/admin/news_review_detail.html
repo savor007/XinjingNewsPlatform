@@ -44,7 +44,7 @@
                 </div>
             </div>
             <div class="form_group indent_group">
-                <input type="radio" name="action" checked="" value="accept"> 通过&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="action" checked="" value="approve"> 通过&nbsp;&nbsp;&nbsp;&nbsp;
                 <input type="radio" name="action" value="reject"> 拒绝通过
             </div>
             <div class="form_group group_hide">
@@ -56,7 +56,7 @@
                 <input type="button" value="取消" class="cancel" onclick="cancel()">
             </div>
             <!-- 隐藏字段，用于记录当前新闻id -->
-                <input name="news_id" value="{{ data.news_info.news.id }}" hidden>
+                <input name="news_id" value="{{ data.news_info.id }}" hidden>
 
             </form>    
         </div>

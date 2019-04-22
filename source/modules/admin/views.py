@@ -10,6 +10,104 @@ from source.utility.response_code import RET
 from . import admin_blueprint
 
 
+@admin_blueprint.route('/news_edit_action', methods=['GET'])
+def function_news_editaction():
+    news_id_str=request.args.get('news_id',None)
+    if not news_id_str:
+        return jsonify(errno=RET.PARAMERR, errmsg="parameter error")
+    try:
+        news_id=int(news_id_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.PARAMERR, errmsg="news id format error")
+    news=None
+    categories=list()
+    try:
+        news=News.query.get(news_id)
+        categories=Category.query.all()
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.DBERR, errmsg="database error when query")
+    if not news or categories==[]:
+        return jsonify(errno=RET.NODATA, errmsg="no data return in query.")
+    else:
+        data={
+            "news_info": news.to_dict(),
+            "categories":[category_item.to_dict() for category_item in categories]
+        }
+        return render_template("admin/news_review_detail.html", data=data)
+
+
+
+
+@admin_blueprint.route('/news_edit', methods=['GET'])
+def function_news_edition():
+    news_list=list()
+    errmsg=''
+    page_str=request.args.get("page", "1")
+    try:
+        page=int(page_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        return render_template("admin/news_edit.html", data={"news_list": news_list}, errmsg="page formagt error.")
+
+    try:
+        News_List_Object=News.query.filter(News.status==0).order_by(News.create_time.desc()). \
+            paginate(page, constants.ADMIN_NEWS_PAGE_MAX_COUNT, False)
+
+    except Exception as error:
+        current_app.logger.error(error)
+        return render_template("admin/news_edit.html", data={"news_list": news_list}, errmsg=errmsg)
+    total_page=News_List_Object.pages
+    current_page=News_List_Object.page
+    news_list=[news_item.to_dict() for news_item in News_List_Object.items]
+    data={
+        "news_list":news_list,
+        "current_page":current_page,
+        "total_page":total_page
+    }
+    return render_template("admin/news_edit.html", data=data, errmsg=errmsg)
+
+
+
+
+@admin_blueprint.route('/news_review_action', methods=['POST'])
+def Function_NewsReviewAction():
+    action=request.json.get('action', None)
+    reason=request.json.get('reason', None)
+    news_id_str=request.json.get('news_id', None)
+    if not all([action, news_id_str]):
+        return jsonify(errno=RET.PARAMERR, errmsg='parameters are not enough.')
+    if action.lower() not in ['approve', 'reject']:
+        return jsonify(errno=RET.PARAMERR, errmsg="parameter error")
+
+    try:
+        news_id= int(news_id_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.PARAMERR, errmsg="News ID format error")
+    news=News.query.filter(News.id==news_id, News.status!=0).first()
+    if not news:
+        return jsonify(errno=RET.NODATA, errmsg="News doesn't exist!")
+    if action.lower()=='approve':
+        news.status=0
+    else:
+        reason=request.json.get('reason', None)
+        if not reason:
+            return jsonify(errno=RET.PARAMERR, errmsg="The reason of rejection can not be empty.")
+        else:
+            news.status=-1
+            news.reason=reason
+    try:
+        NewsDB.session.commit()
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.DBERR, errmsg="database update error.")
+    else:
+        return jsonify(errno=RET.OK, errmsg="Action Complete.")
+
+
+
 
 @admin_blueprint.route('/news_review_detail')
 def Function_NewsReviewDetail():
