@@ -10,6 +10,23 @@ from source.utility.response_code import RET
 from . import admin_blueprint
 
 
+
+
+@admin_blueprint.route('/news_type', methods=['GET'])
+def function_news_type():
+    try:
+        category_object_list= Category.query.all()
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.DBERR, errmsg="retrieving error")
+    category_list=list()
+    for category_item in category_object_list:
+        category_list.append(category_item.to_dict())
+    data={
+        "categories":category_list.pop(0)
+    }
+    return render_template('admin/news_type.html', data=data)
+
 @admin_blueprint.route('/news_edit_action', methods=['GET'])
 def function_news_editaction():
     news_id_str=request.args.get('news_id',None)
@@ -30,10 +47,17 @@ def function_news_editaction():
         return jsonify(errno=RET.DBERR, errmsg="database error when query")
     if not news or categories==[]:
         return jsonify(errno=RET.NODATA, errmsg="no data return in query.")
+    categories_list=list()
+    categories.pop(0)
+    for category_item in categories:
+        category_dict=category_item.to_dict
+        if category_item.id==news.category_id:
+            category_dict["is_selected"]="selected"
+        categories_list.append(category_dict)
     else:
         data={
             "news_info": news.to_dict(),
-            "categories":[category_item.to_dict() for category_item in categories]
+            "categories":categories_list
         }
         return render_template("admin/news_review_detail.html", data=data)
 
