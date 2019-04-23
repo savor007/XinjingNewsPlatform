@@ -14,6 +14,14 @@ def HomeTestPage():
     """
     load ranking news below:
     """
+    category_list=list()
+    try:
+        categories=Category.query.all()
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.DBERR, errmsg="error when searching news in database")
+    if categories:
+        category_list= [category.to_dict() for category in categories]
 
     NewsList=None
     try:
@@ -34,9 +42,9 @@ def HomeTestPage():
             current_app.logger.error(error)
             return jsonify(errno=RET.DBERR, errmsg="database access erroor when search user avatar.")
     if user:
-        return render_template('news/index.html', data={"user_info": user.to_dict(), "rankednews":news_elements})
+        return render_template('news/index.html', data={"user_info": user.to_dict(), "rankednews":news_elements,"categories":category_list})
     else:
-        return render_template('news/index.html', data={"user_info": None, "rankednews": news_elements})
+        return render_template('news/index.html', data={"user_info": None, "rankednews": news_elements, "categories":category_list})
 
 
 @index_blueprint.route('/index.html')

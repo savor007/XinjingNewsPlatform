@@ -9,7 +9,10 @@ from source.utility.QiniuFileStorage import *
 
 
 
-
+@user_blueprint.route('/follow', methods=['GET'])
+@Load_User_Info
+def function_userfollows():
+    return render_template('news/user_follow.html')
 
 @user_blueprint.route('/news_release' , methods=['GET','POST'])
 @Load_User_Info

@@ -12,6 +12,16 @@ from . import admin_blueprint
 
 
 
+@admin_blueprint.route('/logout', methods=['GET', 'POST'])
+def Logout_Function():
+    session.pop('user_id', None)
+    session.pop('user_mobile', None)
+    session.pop('user_nickname', None)
+    session.pop('is_admin', None)
+    return jsonify(errno=RET.OK, errmsg='')
+
+
+
 @admin_blueprint.route('/news_type_change', methods=['POST'])
 def function_change_newscategory():
     category_id=request.json.get('category_id', None)

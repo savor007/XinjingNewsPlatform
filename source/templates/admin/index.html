@@ -7,11 +7,12 @@
 	<link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
 	<script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
 
+
 </head>
 <body>
 	<div class="header">
-		<a href="#" class="logo fl"><img src="../../static/admin/images/logo.png" alt="logo"></a>
-		<a href="#" class="logout fr">退 出</a>
+		<a href="#" class="logo fl"><img src="{% if data.user_info.avatar_url %} {{ data.user_info.avatar_url }} {% else %}../../static/admin/images/logo.png {% endif %}" alt="logo"></a>
+		<a href="/" class="logout fr">退 出</a>
 	</div>
 	
 	<div class="side_bar">
@@ -48,7 +49,22 @@
 			var frame_w = $('#main_body').outerWidth();
 			var frame_h = $('#main_body').outerHeight();
 			$('#main_frame').css({'width':frame_w,'height':frame_h});
+
+			$('.logout').click(function(){
+			    $.ajax({
+                    url: "/admin/logout",
+                    type: "GET",
+                    contentType: "application/json",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrf_token")
+                    },
+                    success: function (resp) {
+                        // 刷新当前界面
+                    }
+                })
+            })
 		})
+
 	</script>
 
 </body>

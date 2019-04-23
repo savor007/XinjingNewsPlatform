@@ -5,6 +5,48 @@ from source.models import *
 from source.utility.common import *
 
 
+
+@news_blueprint.route('/followed_user', methods=["POST"])
+@Load_User_Info
+def function_followauthor():
+    user=g.user
+    if not user:
+        return jsonify(errno=RET.SESSIONERR, errmsg="no user log in. Please log in firstly.")
+    author_id_str=request.json.get('author_id',None)
+    action=request.json.get('action')
+    try:
+        author_id=int(author_id_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.PARAMERR, errmsg="author id is in wrong format.")
+    author=None
+    author=User.query.get(author_id)
+    if not author:
+        return jsonify(errno=RET.NODATA, errmsg="no author information.")
+    if author.id==user.id:
+        return jsonify(errno=RET.DATAERR, errmsg="can not follow the current user")
+    if action.lower()=="follow":
+        if user in author.followers:
+            return jsonify(errno=RET.DATAEXIST, errmsg="Current User already followed this author.")
+        else:
+            author.followers.append(user)
+    elif action.lower()=="unfollow":
+        if user not in author.followers:
+            return jsonify(errno=RET.NODATA, errmsg="Current User has not followed this author yet.")
+        else:
+            author.followers.remove(user)
+    else:
+        return jsonify(errno=RET.PARAMERR, errmsg="action not supported!!")
+    try:
+        NewsDB.session.commit()
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.DBERR, errmsg="database error")
+    else:
+        return jsonify(errno=RET.OK, errmsg="success")
+
+
+
 @news_blueprint.route('/comment_like', methods= ["POST"])
 @Load_User_Info
 def Function_Comment_Like():
@@ -217,12 +259,19 @@ def Function_Loadnews(news_id):
                 comment_list.append(comment_dict)
 
             """"""
+            author_info=None
+            author=User.query.filter(User.id==news.user_id).first()
+            if author:
+                author_info=author.to_dict()
+                author_info['news_counts']=author.news_list.count()
+                author_info['followes_count']=author.followers.count()
             data={
                 "user_info":user.to_dict() if user else None,
                 "rankednews":news_elements,
                 "news":news.to_dict(),
                 "news_collected":news_collected,
-                "news_comments":comment_list
+                "news_comments":comment_list,
+                "author":author_info
             }
 
             return render_template('news/detail.html', data=data)
