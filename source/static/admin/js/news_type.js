@@ -38,36 +38,49 @@ $(function(){
         $error.hide();
     });
 
-    $confirm.click(function(){
+    $confirm.click(function() {
 
         var params = {}
-        if(sHandler=='edit')
-        {
+        if (sHandler == 'edit') {
             var sVal = $input.val();
-            if(sVal=='')
-            {
+            if (sVal == '') {
                 $error.html('输入框不能为空').show();
                 return;
             }
             params = {
-                "id": sId,
-                "name": sVal,
+                "category_id": sId,
+                "category_name": sVal,
+                "action":'change',
             };
         }
-        else
-        {
+        else {
             var sVal = $input.val();
-            if(sVal=='')
-            {
+            if (sVal == '') {
                 $error.html('输入框不能为空').show();
                 return;
             }
             params = {
-                "name": sVal,
+                "category_name": sVal,
+                "action":'add',
             }
         }
 
-        // TODO 发起修改分类请求
-
+        $.ajax({
+            url: "/admin/news_type_change",
+            method: "post",
+            headers: {
+                "X-CSRFToken": getCookie("csrf_token")
+            },
+            data: JSON.stringify(params),
+            contentType: "application/json",
+            success: function (resp) {
+                if (resp.errno == "0") {
+                    // 刷新当前界面
+                    location.reload();
+                } else {
+                    $error.html(resp.errmsg).show();
+                }
+            }
+        })
     })
 })

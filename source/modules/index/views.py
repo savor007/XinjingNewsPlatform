@@ -14,6 +14,7 @@ def HomeTestPage():
     """
     load ranking news below:
     """
+
     NewsList=None
     try:
         NewsList=News.query.order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
@@ -31,7 +32,7 @@ def HomeTestPage():
             user=User.query.filter(User.id==user_id).first()
         except Exception as error:
             current_app.logger.error(error)
-            return jsonify(errno=RET.DBERR, errmsg="dabase access erroor when search user avatar.")
+            return jsonify(errno=RET.DBERR, errmsg="database access erroor when search user avatar.")
     if user:
         return render_template('news/index.html', data={"user_info": user.to_dict(), "rankednews":news_elements})
     else:

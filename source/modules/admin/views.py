@@ -3,6 +3,7 @@ from flask import render_template, request, session, redirect,g
 from flask import url_for
 
 from source.models import *
+from source.utility.QiniuFileStorage import StorageFile2RemoteServer
 from source.utility.common import Load_User_Info
 import datetime, time
 
@@ -10,6 +11,40 @@ from source.utility.response_code import RET
 from . import admin_blueprint
 
 
+
+@admin_blueprint.route('/news_type_change', methods=['POST'])
+def function_change_newscategory():
+    category_id=request.json.get('category_id', None)
+    new_category_name=request.json.get('category_name', None)
+    action=request.json.get('action', None)
+    if action.lower() not in ['add', 'change']:
+        return jsonify(errno=RET.PARAMERR, errmsg="ACTION is not supported.")
+    if not all([new_category_name]):
+        return jsonify(errno=RET.PARAMERR, errmsg="parameter is not enough.")
+    if category_id:
+        try:
+            category_id_num=int(category_id)
+        except Exception as error:
+            current_app.logger.error(error)
+            return jsonify(errno=RET.PARAMERR, errmsg="category id is in wrong format.")
+    if action.lower()=='change':
+        category_item=Category.query.get(category_id_num)
+        if not category_item:
+            return jsonify(errno=RET.NODATA, errmsg="database error")
+        else:
+            category_item.name=new_category_name
+    if action.lower()== 'add':
+        category_item=Category()
+        category_item.name=new_category_name
+        NewsDB.session.add(category_item)
+    try:
+        NewsDB.session.commit()
+    except Exception as err:
+        current_app.logger.error(err)
+        NewsDB.session.rollback()
+        return jsonify(errno=RET.DBERR, errmsg="databased insertion error")
+    else:
+        return jsonify(errno=RET.OK, errmsg="success")
 
 
 @admin_blueprint.route('/news_type', methods=['GET'])
@@ -26,6 +61,52 @@ def function_news_type():
         "categories": category_list[1:]
     }
     return render_template('admin/news_type.html', data=data)
+
+
+
+@admin_blueprint.route('/news_edit_action', methods=['POST'])
+def function_edit_action():
+    news_id_str=request.form.get('news_id', None)
+    news_title=request.form.get('news_title',None)
+    news_digest = request.form.get('news_digest', None)
+    news_image = request.files.get('news_url', None)
+    news_content=request.form.get('content', None)
+    news_category_str=request.form.get('category_id', None)
+    if not all([news_id_str, news_title, news_digest, news_content, news_category_str]):
+        return jsonify(errno=RET.PARAMERR, errmsg="Parameters are not enough.")
+    try:
+        news_id=int(news_id_str)
+        news_category=int(news_category_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.PARAMERR, errmsg="parameter format error")
+    news=News.query.get(news_id)
+    if not news:
+        return jsonify(errno=RET.NODATA, errmsg="No data exist!!")
+    news.content=news_content
+    news.title= news_title
+    news.digest= news_digest
+    news.category_id=news_category
+    if news_image:
+        try:
+            news_image_data=news_image.read()
+            url=StorageFile2RemoteServer(news_image_data)
+        except Exception as error:
+            current_app.logger.error(error)
+        else:
+            news.index_image_url=constants.QINIU_DOMAIN_PREFIX+url
+
+    try:
+        NewsDB.session.commit()
+    except Exception as error:
+        NewsDB.session.rollback()
+        current_app.logger.error(error)
+        return jsonify(errno=RET.DBERR, errmsg="Database error")
+    else:
+        return jsonify(errno=RET.OK, errmsg="success")
+
+
+
 
 @admin_blueprint.route('/news_edit_action', methods=['GET'])
 def function_news_editaction():
