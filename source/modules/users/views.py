@@ -12,7 +12,30 @@ from source.utility.QiniuFileStorage import *
 @user_blueprint.route('/follow', methods=['GET'])
 @Load_User_Info
 def function_userfollows():
-    return render_template('news/user_follow.html')
+    page_str=request.args.get('page', None)
+    try:
+        page=int(page_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.PARAMERR, errmsg="page number is wrong format.")
+    user=g.user
+    if not user:
+        return jsonify(errno=RET.SESSIONERR, errmsg="no user log in")
+    total_page=1
+    current_page=1
+    followed_user_list=list()
+    followed_users=user.followed.paginate(page, constants.USER_FOLLOW_MAX_COUNT,False)
+    total_page=followed_users.pages
+    current_page=followed_users.page
+    followed_user_items=followed_users.items
+    data={
+        "total_page":total_page,
+        "current_page":current_page,
+        "follow_user":[follow_user.to_dict() for follow_user in followed_user_items]
+
+    }
+
+    return render_template('news/user_follow.html', data=data)
 
 @user_blueprint.route('/news_release' , methods=['GET','POST'])
 @Load_User_Info

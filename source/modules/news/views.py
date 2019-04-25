@@ -1,8 +1,36 @@
 from source.utility.response_code import RET
 from . import news_blueprint
-from flask import g,render_template, current_app, jsonify, request
+from flask import g,render_template, current_app, jsonify, request, abort
 from source.models import *
 from source.utility.common import *
+
+
+
+
+@news_blueprint.route('/follow', methods=['GET'])
+@Load_User_Info
+def function_user_followed():
+    page_str=request.args.get('page', None)
+    try:
+        page=int(page_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        abort(404)
+
+    total_page=1
+    current_page=1
+    followed_user_list=list()
+    followed_user=User.followed.paginate(page, constants.USER_FOLLOW_MAX_COUNT, False)
+    total_page=followed_user.pages
+    current_page=followed_user.page
+    followed_user_items=followed_user.items
+    followed_user_list=[followed_user_item.to_dict() for followed_user_item in followed_user_items]
+    data={
+        "total_page":total_page,
+        "current_page":current_page,
+        "Follow_User":followed_user_list
+    }
+    return render_template('news/user_follow.html')
 
 
 
