@@ -14,6 +14,8 @@ def HomeTestPage():
     """
     load ranking news below:
     """
+    addr = request.remote_addr
+    print(addr)
     category_list=list()
     try:
         categories=Category.query.all()
