@@ -1,18 +1,81 @@
 from flask import redirect
 
 from . import user_blueprint
-from flask import render_template, session, jsonify, request, g
+from flask import render_template, session, jsonify, request, g, abort
 from source.models import *
 from source.utility.common import *
 from source.utility.response_code import *
 from source.utility.QiniuFileStorage import *
 
 
+@user_blueprint.route('/other_news_list')
+def function_loadotheruserNewslist():
+    page_str=request.args.get("p", None)
+    other_user_id_str=request.args.get("user_id", None)
+    if not all([page_str, other_user_id_str]):
+        return jsonify(errno=RET.PARAMERR, errmsg="Parameters error!!")
+    try:
+        page=int(page_str)
+        other_user_id=int(other_user_id_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        return jsonify(errno=RET.PARAMERR, errmsg="parameter format error")
+    other_user=None
+    other_user=User.query.get(other_user_id)
+    if not other_user:
+        return jsonify(errno=RET.NODATA,errmsg="other user doesn't exist!!!")
+    else:
+        try:
+            total_page=1
+            current_page=1
+            newlist=list()
+            newslist_pages=other_user.news_list.paginate(page, constants.OTHER_NEWS_PAGE_MAX_COUNT,False)
+        except Exception as error:
+            current_app.logger.error(error)
+            return jsonify(errno=RET.DBERR, errmsg="news database error")    #news_list
+        else:
+            data={
+                "total_page":newslist_pages.pages,
+                "current_page":newslist_pages.page,
+                "news_list":[news.to_dict() for news in newslist_pages.items]
+            }
+            return jsonify(errno=RET.OK, errmsg="", data=data)
+
+@user_blueprint.route('/other_info', methods=['GET'])
+@Load_User_Info
+def function_loadotherinfo():
+    user=g.user
+    if not user:
+        abort(404)
+    follower_id_str=request.args.get('user_id', None)
+    if not follower_id_str:
+        abort(404)
+    try:
+        follower_id=int(follower_id_str)
+    except Exception as error:
+        current_app.logger.error(error)
+        abort(404)
+    follower=None
+    follower=User.query.get(follower_id)
+    if not follower:
+        abort(404)
+    else:
+        # news_list_data=follower.news_list
+        is_followed=False
+        if follower in user.followed:
+            is_followed=True
+        data={
+            "is_followed":is_followed,
+            "other_info": follower.to_dict(),
+            "user_info": user.to_dict()
+            # "news_list":[news_item.to_dict() for news_item in news_list_data]
+        }
+        return render_template('news/other.html', data=data)
 
 @user_blueprint.route('/follow', methods=['GET'])
 @Load_User_Info
 def function_userfollows():
-    page_str=request.args.get('page', None)
+    page_str=request.args.get('page', "1")
     try:
         page=int(page_str)
     except Exception as error:
