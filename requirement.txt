@@ -27,7 +27,7 @@ gevent==1.4.0
 greenlet==0.4.15
 guacamole==0.9.2
 html5lib==0.999
-httplib2==0.9.1
+httplib2==0.18.0
 idna==2.0
 ini-config-reader==1.0.0
 iniconf==0.1.9.1
