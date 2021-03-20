@@ -33,7 +33,7 @@ ini-config-reader==1.0.0
 iniconf==0.1.9.1
 ipython==2.4.1
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 language-selector==0.1
 louis==2.6.4
 lxml==3.5.0
