@@ -64,7 +64,7 @@ python-systemd==231
 pyxdg==0.25
 qiniu==7.2.2
 redis==3.2.1
-reportlab==3.3.0
+reportlab==3.5.55
 requests==2.9.1
 sessioninstaller==0.0.0
 simplegeneric==0.8.1
